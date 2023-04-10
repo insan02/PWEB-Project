@@ -1,0 +1,21 @@
+{
+  "name": "tb_pweb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-ejs-layouts": "^2.5.1",
+    "mysql2": "^3.2.0",
+    "nodemon": "^2.0.22",
+    "path": "^0.12.7"
+  }
+}
