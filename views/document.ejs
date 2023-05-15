@@ -1,0 +1,60 @@
+<nav>
+  
+</nav>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">upload</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="form-upload"action="#" method="post">
+          <p class="page-title">Upload</p>
+          <div class="mb-3">
+            <div class="file-drop">
+              <input type="file" id="file-input" multiple>
+              <label for="file-input" class="file-label">
+                <span><i class="bi bi-cloud-upload"></i></span>
+                <span>Click to upload</span>
+              </label>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-success">Add Document</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="top-document">
+  <h3 class="mb-4 mx-2">Documents</h3>
+  <button type="button" class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Upload
+  </button>
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th>File</th>
+      <th>Tanggal</th>
+      <th>Status TTD</th>
+      <th>Opsi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Surat Undangan.pdf</td>
+      <td>12 Februari 2023</td>
+      <td>Ada</td>
+      <td class="action">
+        <a href="#" class="btn btn-warning text-white mb-2">Share</a>
+        <a href="#" class="btn btn-danger mb-2">Hapus</a>
+      </td>
+    </tr>
+    
+  </tbody>
+</table>
+
