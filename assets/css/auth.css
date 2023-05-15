@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Adamina&family=Amiko:wght@400;600;700&family=Oswald:wght@200;300;400;500;600;700&family=Poppins:wght@300;400;600&display=swap');@import url('https://fonts.googleapis.com/css2?family=Adamina&family=Amiko:wght@400;600;700&family=Oswald:wght@200;300;400;500;600;700&family=Poppins:wght@300;400;600&display=swap');
+*{
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+}
+
+.regis-wrapper{
+    background-color: #5CB1E1;
+    width:100%;
+    height:100vh;
+    display:grid;
+    place-content: center;
+}
+
+.regis-wrapper .form-container{
+  border-radius: 15px;
+    width: 460px;
+    height: 640px;
+    background-color: #fff;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+}
+.regis-wrapper .form-container form{
+    background-color: #fff;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding:40px;
+}
+
+.title{
+    display:flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.title h1{
+    font-weight: 400;
+    font-size: 48px;
+    color:#023E98;
+}
+
+.btn-submit{
+    width: 210px;
+    height: 40px;
+    border:0;
+    background: #2556A1;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 19px;
+    color:#fff;
+    transition: .2s;
+    margin-top:50px;
+}
+
+.btn-submit:hover{
+    background: #1c4179    ;
+
+}
+
+.link-btn{
+    text-decoration: none;
+    padding:10px 20px;
+    border:0;
+    background: #2556A1;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 19px;
+    color:#fff;
+    transition: .2s;
+    margin-top:50px;
+}
+
+.link-btn:hover{
+    background: #1c4179    ;
+
+}

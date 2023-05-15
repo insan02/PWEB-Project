@@ -1,0 +1,24 @@
+.top-document{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom:50px;
+}
+
+.bi-pencil{
+  color:#165AC1;
+  font-size:23px;
+}
+.bi-trash{
+  color:#FD5761;
+  font-size:23px;
+}
+
+.action{
+  display:flex;
+  flex-direction: row;
+  gap:10px;
+}
+
+

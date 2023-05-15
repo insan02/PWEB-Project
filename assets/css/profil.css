@@ -1,0 +1,31 @@
+.wrapper-profil{
+  width:100%;
+  padding:40px;
+  display:flex;
+  flex-direction: row;
+  gap:30px;
+}
+
+.wrapper-profil form{
+  width:100%;
+  padding:40px;
+}
+
+.avatar img{
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  margin-left:40px;
+}
+
+.btn-save-profil{
+  width: 128px;
+  height: 43px;
+  background: #2556A1;
+  border-radius: 15px;
+  transition:.3s;
+  font-weight: 600;
+  font-size: 18px;
+  border:none;
+  color:#fff;
+}
