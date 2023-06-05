@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Signup</title>
     <link rel='stylesheet' href='./css/auth.css'/> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
+    
     <div class="regis-wrapper">
         <div class="right">
             <div class="form-container">
                 <div class="title">
                     <h1>O - Sign</h1>
                 </div>
-                <form action="">
+                
+                <form action="/signup" method="POST">
                     <div class="form-item">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" name="username" class="form-control" id="username" >
@@ -25,19 +28,46 @@
                     </div>
                     <div class="form-item">
                         <label for="exampleInputPassword1" class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+                        <div class="password-container">
+                            <input type="password" name="password" class="form-control" id="password">
+                            <i class="password-icon fas fa-eye" onclick="togglePasswordVisibility('password')"></i>
+                        </div>
                     </div>
                     <div class="form-item">
                         <label for="exampleInputPassword1" class="form-label">Confirm Password</label>
-                        <input type="password" name="confirm_password" class="form-control" id="exampleInputPassword1">
+                        <div class="password-container">
+                            <input type="password" name="confirm_password" class="form-control" id="confirm_password">
+                            <i class="password-icon fas fa-eye" onclick="togglePasswordVisibility('confirm_password')"></i>
+                        </div>
                     </div>
                     <div class="form-item form-button">
-                        <button type="submit" class="btn-submit">Create</button>
+                        <button type="submit" class="btn-submit">
+                            Create
+                            
+                        </button>       
                     </div>
                     <a href="/login" class="link-btn">Login</a>
                 </form>
             </div>
         </div>
+
     </div>
+
+    <script>
+     function togglePasswordVisibility(inputId) {
+        var passwordInput = document.getElementById(inputId);
+        var passwordIcon = passwordInput.nextElementSibling;
+  
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordIcon.classList.remove("fa-eye");
+            passwordIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            passwordIcon.classList.remove("fa-eye-slash");
+            passwordIcon.classList.add("fa-eye");
+        }
+     }
+    </script>
 </body>
 </html>

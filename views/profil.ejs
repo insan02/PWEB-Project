@@ -3,17 +3,18 @@
 </nav>
 <div class="wrapper-profil">
   <div class="avatar">
-    <img src="./img/avatar.jpg" alt="avatar">                                  
-      <h1>Username</h1>  
-      <div class="logout">
-        <a href="/login" class="btn btn-danger" align="middle">Logout</a>
-      </div>
-       
- </div>
-
-  <form>
+    <img src="./img/avatar.jpg" alt="avatar">                                    
+      <div class="upload-btn">
+    <label for="file-upload"></label>
+    <input type="file" id="file-upload">
+  </div> 
+  </div> 
+  
+  
+ 
+<form>
   <div class="row mb-3">
-    <label for="username" class="col-sm-2 col-form-label">Your Name</label>
+    <label for="username" class="col-sm-2 col-form-label">Username</label>
     <div class="col-sm-5">
         <input type="text" id="disabledTextInput" class="form-control" placeholder="Mhd Faiz Yunus">
     </div>
@@ -38,5 +39,39 @@
   </div>
   <button type="submit" class="btn-save-profil">Edit</button>
 </form>
+<div class="logout">
+  <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#modalLogout">
+    Logout
+  </button>
+</div> 
+</div>
 
+<div class="modal fade" id="modalLogout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-3" id="exampleModalLabel">Logout</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="form-upload" action="" method="post">
+          <div class="row mb-3">
+            <label for="name" class="col-sm-4 col-form-label">Username</label>
+            <div class="col-sm-8">
+                <input type="text" id="disabledTextInput" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="password" class="col-sm-4 col-form-label">Password</label>
+            <div class="col-sm-8">
+                <input type="password" id="disabledTextInput" class="form-control">
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger text-white">Logout</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
