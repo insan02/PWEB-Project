@@ -8,6 +8,13 @@ const jwt = require('jsonwebtoken');
 const app = express()
 const bcrypt = require('bcryptjs')
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const pdfFolder = path.join(__dirname, 'pdf');
+const multer = require('multer');
+const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
+const fs = require('fs');
+
+
 
 app.use(express.json());
 // middleware untuk parsing request body
@@ -27,10 +34,31 @@ app.set('view engine', 'ejs')
 app.use(expressLayouts);
 
 // mengatur folder views
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(session({
+  secret: 'secret_key',
+  resave: false,
+  saveUninitialized: true
+}));
 
 
-//koneksi database
+//Konfigurasi penyimpanan file menggunakan multer
+const storage = multer.diskStorage({
+  destination: 'uploads/', // Direktori penyimpanan file
+  filename: (req, file, cb) => {
+    cb(null, file.originalname); // Nama file yang digunakan adalah nama asli file
+  }
+});
+
+const upload = multer({ storage });
+
+module.exports = upload;
+
+const saltRounds = 10;
+
+
+//Koneksi database
 const db = mysql.createConnection({
 host: 'localhost',
 user: 'root',
@@ -42,151 +70,430 @@ if(err) throw err
 console.log('Database terhubung')
 })
 
-const saltRounds = 10;
-
+//=========================
+//Signup
+//=========================
   app.get('/signup', function (req, res) {
-  res.render('signup',{
-    title : 'Signup',
-    layout : 'layouts/otentikasi'
+    res.render('signup', {
+      title: 'Signup',
+      layout: 'layouts/otentikasi'
     });
-  })
+  });
     
-  app.post('/signup', async (req, res) => {
+  app.post('/signup', function (req, res) {
     const { username, email, password, confirm_password } = req.body;
+    let account = [username, email];
   
-    // Check if username already exists
-    const sqlCheck = 'SELECT * FROM users WHERE username = ?';
-    db.query(sqlCheck, username, (err, result) => {
+    if (!username || !email || !password || !confirm_password) {
+      return res.status(400).json({ error: 'Silakan lengkapi semua data' });
+    }
+  
+    // check if username or email already exists
+    const sqlCheck = 'SELECT * FROM users WHERE username = ? OR email = ?';
+    db.query(sqlCheck, account, (err, result) => {
       if (err) throw err;
   
       if (result.length > 0) {
-        // Username already exists, send error response
-        return res.status(400).send('Username already exists');
-      }
-
-      if (password.length < 8) {
-        // Password is too short, send error response
-        return res.status(400).send('Password must be at least 8 characters long');
+        const existingUser = result.find(user => user.username === username);
+        const existingEmail = result.find(user => user.email === email);
+  
+        // Username already exists
+        if (existingUser) {
+          return res.status(400).json({ error: 'Username sudah ada! Silakan gunakan username lain' });
+        }
+  
+        // Email already exists
+        if (existingEmail) {
+          return res.status(400).json({ error: 'Email sudah ada! Silakan gunakan email lain.' });
+        }
       }
   
       if (password !== confirm_password) {
         // Passwords do not match, send error response
-        return res.status(400).send('Passwords do not match');
+        return res.status(400).json({ error: 'Passwords tidak cocok!' });
       }
   
-      // Insert user to database
-      const sqlInsert = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-      const values = [username, email, password];
-      db.query(sqlInsert, values, (err, result) => {
+      if (password.length < 8) {
+        // Password length is less than 8 characters, send error response
+        return res.status(400).json({ error: 'Isi password minimal 8 karakter!' });
+      }
+  
+      // hash password
+      bcrypt.hash(password, saltRounds, function (err, hash) {
         if (err) throw err;
-        console.log('User registered successfully');
-        
-        res.redirect('/login');
+  
+        // insert user to database
+        const sqlInsert = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+        const values = [username, email, hash];
+        db.query(sqlInsert, values, (err, result) => {
+          if (err) throw err;
+          console.log('user registered');
+          res.json({ message: 'User registered successfully!' });
+        });
       });
     });
   });
   
-  // Login form
+  
+  //=======================
+  // Home page
+  //======================
+  app.get('/', requireAuth, function (req, res) {
+    // Render the home page
+    res.render('index', {
+      title: 'Home',
+      layout: 'layouts/kerangka'
+    });
+  });
+
+//========================  
+// Login
+//========================
   app.get('/login', function (req, res) {
     res.render('login', {
-      title: 'Login',
-      layout: 'layouts/otentikasi'
+    title: 'Login',
+    layout: 'layouts/otentikasi'
     });
   });
-  
+
+
   app.post('/login', function (req, res) {
-    const { username, password } = req.body;
-  
-    // Check if username exists
-    const sqlCheck = 'SELECT * FROM users WHERE username = ?';
-    db.query(sqlCheck, username, (err, result) => {
+    const { usernameOrEmail, password } = req.body;
+
+    const sql = 'SELECT * FROM users WHERE username = ? OR email = ?';
+    db.query(sql, [usernameOrEmail, usernameOrEmail], function(err, result) {
       if (err) throw err;
-  
-      if (result.length === 0) {
-        return res.status(400).send('Username does not exist');
+
+     if (result.length === 0) {
+      // Username or password is incorrect
+       return res.status(401).json({ error: 'Username atau email tidak ditemukan' });
       }
-  
+
       const user = result[0];
-  
-      if (password !== user.password) {
-        return res.status(400).send('Invalid password');
+
+     // Compare password
+     bcrypt.compare(password, user.password, function(err, isValid) {
+      if (err) throw err;
+
+      if (!isValid) {
+        // Username or password is incorrect
+        return res.status(401).json({ error: 'Password anda salah!' });
       }
-  
-      // Generate JWT token
-      const token = jwt.sign({ id: user.id, username: user.username }, 'your-secret-key');
-  
-      // Set token as a cookie
+
+      // Generate token
+      const token = jwt.sign({ user_id: user.user_id }, 'secret_key');
       res.cookie('token', token, { httpOnly: true });
-  
-      // Redirect to main page
-      res.redirect('/');
-    });
-  });
-  
-  // Home page
-  app.get('/', function (req, res) {
-    // Get token from cookie
-    const token = req.cookies.token;
-  
-    if (!token) {
-      return res.redirect('/login');
-    }
-  
-    // Verify token
-    jwt.verify(token, 'your-secret-key', function (err, decoded) {
-      if (err) {
-        return res.redirect('/login');
-      }
-  
-      const { username } = decoded;
-  
-      // Render the home page
-      res.render('index', {
-        title: 'Home',
-        layout: 'layouts/kerangka',
-        username: username
+
+      res.status(200).json({ message: 'Login berhasil' });
       });
     });
   });
 
-  app.post('/forgot-password', (req, res) => {
-    const email = req.body.email;
+  function requireAuth(req, res, next) {
+    const token = req.cookies.token;
 
-    // Lakukan validasi email dan proses lupa password di sini
-    // ...
+   if (!token) {
+    res.redirect('/login');
+    return;
+    }
+  
+    jwt.verify(token, 'secret_key', function(err, decoded) {
+    if (err) {
+      res.redirect('/login');
+      return;
+    }
 
-    // Kirim respon JSON
-    res.json({ message: 'Email untuk reset password telah dikirim.' });
+    req.user_id = decoded.user_id;
+    next();
+  });
+}
+
+//===============
+//Profil
+//===============
+  app.get('/profil', requireAuth, (req, res) => {
+    const user_id = req.user_id;
+    const selectSql = `SELECT * FROM users WHERE user_id = ${user_id}`;
+    db.query(selectSql, (err,result)=>{
+      if (err) throw err;
+        res.render('profil',{
+          user: result[0],
+          title:'Profil',
+          layout:'layouts/kerangka'
+      });
+    });
+  });
+
+
+//=================
+//Edit Profil
+//=================
+  app.post('/edit-profil', upload.single('sign_img'), requireAuth, (req, res) => {
+    let user_id = req.user_id;
+    const { username, email } = req.body;
+    const signImg = req.file ? req.file.filename : null;
+  
+    // Build update query and values
+    let updateQuery = 'UPDATE users SET username=?, email=?';
+    let values = [username, email];
+  
+    if (signImg) {
+      updateQuery += ', sign_img=?';
+      values.push(signImg);
+    }
+  
+    updateQuery += ' WHERE user_id=?';
+    values.push(user_id);
+  
+    // Update data in MySQL
+    db.query(updateQuery, values, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      console.log('Data updated in MySQL!');
+  
+      // Copy file to img directory
+      if (signImg) {
+        const signImgSource = path.join(__dirname, 'uploads', signImg);
+        const signImgDestination = path.join(__dirname, 'assets', 'img', signImg);
+        fs.copyFileSync(signImgSource, signImgDestination);
+      }
+  
+      req.session.profilsuccessMessage = 'Profil berhasil diubah';
+  
+      // Create JSON response
+      const jsonResponse = {
+        success: true,
+        message: req.session.profilsuccessMessage
+      };
+  
+      res.json(jsonResponse);
+    });
+  });
+
+
+  //==================
+  //Change Password
+  //==================
+  app.post('/change-password', requireAuth, (req, res) => {
+    const userId = req.user_id;
+    const { password, new_password, confirm_new_password } = req.body;
+  
+    const Passsql = 'SELECT password FROM users WHERE user_id = ?';
+    db.query(Passsql, [userId], (error, result) => {
+      if (error) {
+        console.log({ pesan: 'Server Error', error });
+        res.redirect('/profil');
+        return;
+      }
+  
+      const hashedPassword = result[0].password;
+      bcrypt.compare(password, hashedPassword, (error, isMatch) => {
+        if (error) {
+          console.log({ pesan: 'Server Error', error });
+          res.redirect('/profil');
+          return;
+        }
+  
+        if (isMatch) {
+          if (new_password === confirm_new_password) {
+            bcrypt.hash(new_password, saltRounds, (err, hashedNewPassword) => {
+              if (err) {
+                console.log({ pesan: 'Server Error', err });
+                res.redirect('/profil');
+                return;
+              }
+              const updateSql = 'UPDATE users SET password = ? WHERE user_id = ?';
+              const values = [hashedNewPassword, userId];
+              db.query(updateSql, values, (err, result) => {
+                if (err) {
+                  console.log({ pesan: 'Server Error', err });
+                  res.redirect('/profil');
+                  return;
+                }
+                console.log({ pesan: 'Password berhasil diubah', values });
+                res.redirect('/profil');
+              });
+            });
+          } else {
+            console.log({ pesan: 'New password and confirm new password do not match' });
+            res.redirect('/profil');
+          }
+        } else {
+          res.redirect('/profil');
+        }
+      });
+    });
+  });
+  
+
+//=================
+//Document
+//=================
+app.get('/document', requireAuth, function (req, res) {
+  let user_id = req.user_id;
+  const sqlDoc = `SELECT documents.name, documents.filename, signature.status
+    FROM documents
+    JOIN signature ON documents.document_id = signature.document_id
+    JOIN users ON signature.user_id = users.user_id`;
+  const sqlUsers = `SELECT * FROM users WHERE user_id != ${user_id}`;
+
+  db.query(sqlDoc, function (err, docResult) {
+    if (err) throw err;
+
+    db.query(sqlUsers, function (err, usersResult) {
+      if (err) throw err;
+
+      res.render('document', {
+        title: 'Document',
+        layout: 'layouts/kerangka',
+        documents: docResult,
+        users: usersResult,
+        moment: moment
+      });
+    });
+  });
 });
 
-  app.get('/profil', function (req, res) {
-      res.render('profil',{ 
-      title:"Profil",
-      layout:"layouts/kerangka"
-      }) 
-  })
 
+//==============
+//Send 
+//==============
+app.post('/send-data', upload.single('filename'), (req, res) => {
+  const { user_id, name, description, jabatan} = req.body;
+  const filename = req.file ? req.file.filename : null;
 
-  app.get('/upload', function (req, res) {
-    res.render('upload',{ 
-    title:"Upload",
-    layout:"layouts/kerangka"
-    }) 
-  })
+  // Insert data ke tabel document di MySQL
+  const insertdocumentql = 'INSERT INTO documents (user_id, name, filename, description) VALUES (?, ?, ?, ?)';
+  const documentValues = [user_id, name, filename, description];
+
+  db.query(insertdocumentql, documentValues, (err, documentResult) => {
+    if (err) {
+      throw err;
+    }
+
+    console.log('Data inserted to document table!');
+
+    // Get the newly inserted document ID
+    const documentId = documentResult.insertId;
+
+    // Insert data ke tabel signature di MySQL
+    const insertSignatureSql = 'INSERT INTO signature (user_id, document_id, jabatan) VALUES (?, ?, ?)';
+    const signatureValues = [user_id, documentId, jabatan];
+
+    db.query(insertSignatureSql, signatureValues, (err, signatureResult) => {
+      if (err) {
+        throw err;
+      }
+
+      console.log('Data inserted to signature table!');
+
+      req.session.successMessage = 'Dokumen berhasil diunggah';
+      res.redirect('/document');
+    });
+  });
+});
   
-  app.get('/document', function (req, res) {
-      res.render('document',{ 
-      title:"Document",
-      layout:"layouts/kerangka"
-      }) 
+
+//================
+//Message  
+//================
+  app.get("/message", requireAuth, function (req, res) {
+    const user_id = req.user_id;
+    const senders = `
+      SELECT *
+      FROM documents
+      INNER JOIN signature ON documents.document_id = signature.document_id
+      WHERE signature.user_id = ${user_id}
+    `;
+    db.query(senders, (err, result) => {
+      if (err) throw err;
+
+      res.render("message", {
+        senders: result,
+        moment: moment,
+        title: "Messages",
+        layout: "layouts/kerangka"
+      });
+    });
   })
 
-  app.get('/message', function (req, res) {
-    res.render('message',{ 
-    title:"Message",
-    layout:"layouts/kerangka"
-    }) 
-  })
+
+//=================
+//Menampilkan PDF  
+//=================
+app.use(express.static('public'));
+
+// Endpoint untuk menampilkan dokumen pada message
+app.get('/viewmessage', (req, res) => {
+  const fileName = req.query.file;
+  const filePath = path.join(__dirname, 'uploads', fileName);
+  res.sendFile(filePath);
+});
+
+// Endpoint untuk menampilkan dokumen yang dikirim
+app.get('/viewdocument', (req, res) => {
+  const file = req.query.file; // Mendapatkan nilai parameter 'file' dari query string
+  const filePath = path.join(__dirname, 'uploads', file);
+  res.sendFile(filePath);
+});
+
+
+//======================
+//Upload Tanda Tangan
+//=======================
+app.post('/sign', async (req, res) => {
+  try {
+    // Mendapatkan nama file PDF yang akan ditandatangani
+    const fileName = req.query.file;
+
+    // Mendapatkan path file PDF yang akan ditandatangani
+    const pdfPath = path.join(__dirname, 'uploads', fileName);
+
+    // Mendapatkan path gambar tanda tangan pengguna yang sedang login
+    const signImg = req.user.sign_img; // Assuming the user object is available in the request
+    const signImgPath = path.join(__dirname, 'assets', 'img', signImg);
+
+    // Membaca file PDF
+    const pdfBytes = fs.readFileSync(pdfPath);
+
+    // Membaca gambar tanda tangan pengguna
+    const signImageBytes = fs.readFileSync(signImgPath);
+
+    // Membuat instansi PDFDocument menggunakan pdf-lib
+    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+
+    // Memasukkan gambar tanda tangan ke dalam dokumen PDF
+    const signImage = await pdfDoc.embedPng(signImageBytes);
+    const page = pdfDoc.addPage();
+
+    // Menyimpan pembaruan dokumen PDF
+    const updatedPdfBytes = await pdfDoc.save();
+
+    // Menentukan path untuk menyimpan file PDF yang diperbarui
+    const updatedPdfPath = path.join(__dirname, 'uploads', 'newfile.pdf');
+
+    // Menyimpan file PDF yang diperbarui
+    fs.writeFileSync(updatedPdfPath, updatedPdfBytes);
+
+    // Membuka PDF yang baru di tab baru
+    const newPdfUrl = `/viewmessage?file=newfile.pdf`;
+    res.send(`<script>window.open("${newPdfUrl}", "_blank");</script>`);
+  } catch (error) {
+    console.error('Terjadi kesalahan:', error);
+    res.status(500).send('Terjadi kesalahan saat menambahkan tanda tangan.');
+  }
+});
+
+
+//===============
+//Logout  
+//===============
+app.get('/logout', function(req, res) {
+  res.clearCookie('token');
+  res.redirect('/login');
+});
+
 
 app.listen(3000,()=>{
     console.log("GO!");

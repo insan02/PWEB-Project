@@ -18,14 +18,97 @@
   margin-left:40px;
 }
 
-.btn-save-profil{
-  width: 128px;
+.btn-edit-profile{
+  width: 100px;
   height: 43px;
-  background: #2556A1;
+  background: #246ddb;
   border-radius: 15px;
   transition:.3s;
   font-weight: 600;
   font-size: 18px;
   border:none;
   color:#fff;
+}
+
+.btn-edit-button{
+  width:90px;
+  height: 40px;
+  background: #246ddb;
+  border-radius: 15px;
+  transition:.3s;
+  font-weight: 600;
+  font-size: 18px;
+  border:none;
+  color:#fff;
+}
+
+.profile {
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.profile img {
+  display: block;
+  max-width: 200px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  border-radius: 50%;
+}
+.profile input[type="file"] {
+  margin-bottom: 20px;
+}
+.profile button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+#profilePhoto {
+  margin-bottom: 10px;
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  animation: spin 1s linear infinite;
+  margin-left: 4px;
+  display: none;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

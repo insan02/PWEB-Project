@@ -1,77 +1,310 @@
 <nav>
   
 </nav>
-<div class="wrapper-profil">
-  <div class="avatar">
-    <img src="./img/avatar.jpg" alt="avatar">                                    
-      <div class="upload-btn">
-    <label for="file-upload"></label>
-    <input type="file" id="file-upload">
-  </div> 
-  </div> 
-  
-  
- 
-<form>
-  <div class="row mb-3">
-    <label for="username" class="col-sm-2 col-form-label">Username</label>
-    <div class="col-sm-5">
-        <input type="text" id="disabledTextInput" class="form-control" placeholder="Mhd Faiz Yunus">
-    </div>
-  </div>
-  <div class="row mb-3">
-    <label for="email" class="col-sm-2 col-form-label">Email</label>
-    <div class="col-sm-5">
-      <input type="email" class="form-control" id="email" placeholder="Mhd@gmail.com">
-    </div>
-  </div>
-  <div class="row mb-3">
-    <label for="Phone" class="col-sm-2 col-form-label">Phone</label>
-    <div class="col-sm-5">
-      <input type="text" class="form-control" id="Phone" placeholder="123456">
-    </div>
-  </div>
-  <div class="row mb-3">
-    <label for="password" class="col-sm-2 col-form-label">Password</label>
-    <div class="col-sm-5">
-      <input type="password" class="form-control" id="password" placeholder="*******">
-    </div>
-  </div>
-  <button type="submit" class="btn-save-profil">Edit</button>
-</form>
-<div class="logout">
-  <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#modalLogout">
-    Logout
-  </button>
-</div> 
-</div>
 
-<div class="modal fade" id="modalLogout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Edit Profil -->
+<div class="modal fade" id="exampleModalEdit" tabindex="-1" aria-labelledby="exampleModalEdit" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-3" id="exampleModalLabel">Logout</h1>
+        <h1 class="modal-title fs-3" id="exampleModalEdit">Edit</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form class="form-upload" action="" method="post">
+        <form class="form-upload" action="/edit-profil" method="post" enctype="multipart/form-data">
           <div class="row mb-3">
-            <label for="name" class="col-sm-4 col-form-label">Username</label>
+            <label for="usernameInput" class="col-sm-4 col-form-label">Username</label>
             <div class="col-sm-8">
-                <input type="text" id="disabledTextInput" class="form-control">
+              <input name="username" type="text" id="usernameInput" class="form-control" value="<%= user.username %>">
             </div>
           </div>
           <div class="row mb-3">
-            <label for="password" class="col-sm-4 col-form-label">Password</label>
+            <label for="emailInput" class="col-sm-4 col-form-label">Email</label>
             <div class="col-sm-8">
-                <input type="password" id="disabledTextInput" class="form-control">
+              <input name="email" type="email" id="emailInput" class="form-control" value="<%= user.email %>" >
             </div>
           </div>
-          
+          <div class="row mb-3">
+            <label for="sign_img" class="col-sm-4 col-form-label">sign_img</label>
+            <div class="col-sm-8">
+              <input type="file" id="sign_img" name="sign_img" class="form-control" accept="image/*">
+            </div>
+          </div>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-danger text-white">Logout</button>
+          <button type="submit" class="btn btn-info text-white">Save</button>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Logout -->
+<div class="text-end">
+  <a class="btn btn-danger text-white" href="/logout">Logout</a>
+</div>
+
+<!-- Foto Profil -->
+<div class="container-wrapper d-flex" style="gap: 30px;" >
+  <div class="profil-wrapper">
+    <div class="item item-">
+      <img id="profile-img" src="./img/<%= user.sign_img %>" style="object-fit: cover;"width="150" height="150">
+    </div>
+  </div>
+    <div class="col-sm-">
+      <div id="uploadFormWrapper" style="display: none;">
+        <form id="uploadForm" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-sm-8">
+              <input type="file" class="form-control" id="profilePhoto" name="profilePhoto" accept="image/*">
+              <button type="submit" class="btn btn-primary text-white">Save</button>
+                <span id="saveButtonLabel"></span>
+                <span id="saveButtonLoader" class="loader"></span>
+              <button id="backButton" class="btn btn-secondary text-white">Back</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+
+
+<!-- Data Profil -->
+<form>
+  <div class="row mb-3">
+    <label for="usernameInput" class="col-sm-4 col-form-label">Username</label>
+      <div class="col-sm-8">
+        <span id="displayUsername" class="form-control"><%= user.username %></span>
+      </div>
+  </div>
+  <div class="row mb-3">
+    <label for="emailInput" class="col-sm-4 col-form-label">Email</label>
+      <div class="col-sm-8">
+        <span id="displayEmail" class="form-control"><%= user.email %></span>
+      </div>
+  </div>
+  <div class="row mb-3">
+    <label for="password" class="col-sm-4 col-form-label">Password</label>
+    <div class="col-sm-8">
+      <input type="password" class="form-control" value="<%= user.password %>" readonly>
+      <button type="button"  class="change-pass"  data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Change password?
+      </button>
+    </div>
+  </div>
+  <button type="button" class="btn-edit-profile" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
+</form>
+</div>
+
+
+<!-- Ganti Password -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Change Password</h1>
+      </div>
+      <div class="modal-body">
+        <form class="form-upload" action="/change-password" method="post">
+          <div class="row mb-3">
+            <label for="password" class="col-sm-4 col-form-label">Password</label>
+            <div class="col-sm-8">
+              <input name="password" type="password" id="password" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="new_password" class="col-sm-4 col-form-label">New Password</label>
+            <div class="col-sm-8">
+              <input name="new_password" type="password" id="new_password" class="form-control" >
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="confirm_new_password" class="col-sm-4 col-form-label">Confirm New Password</label>
+            <div class="col-sm-8">
+              <input name="confirm_new_password" type="password" id="confirm_new_password" class="form-control" >
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-info text-white">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Edit Profil
+  const form = document.querySelector('.form-upload');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    try {
+      const response = await fetch('/edit-profil', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const jsonResponse = await response.json();
+        if (jsonResponse.success) {
+          alert(jsonResponse.message);
+          window.location.href = '/profil';
+        } else {
+          alert('Failed to edit profile');
+        }
+      } else {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while editing the profile');
+    }
+  });
+
+
+</script>
+
+<!-- <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if there is a profile photo URL in local storage
+  const storedProfilePhotoURL = localStorage.getItem('profilePhotoURL');
+  if (storedProfilePhotoURL) {
+    const profileImg = document.getElementById('profile-img');
+    profileImg.src = storedProfilePhotoURL;
+
+    const editButtonWrapper = document.getElementById('editButtonWrapper');
+    const uploadFormWrapper = document.getElementById('uploadFormWrapper');
+
+    editButtonWrapper.style.display = 'block';
+    uploadFormWrapper.style.display = 'none';
+  }
+});
+
+document.getElementById('editButton').addEventListener('click', function () {
+  
+ 
+    const editButtonWrapper = document.getElementById('editButtonWrapper');
+    const uploadFormWrapper = document.getElementById('uploadFormWrapper');
+
+    editButtonWrapper.style.display = 'none';
+    uploadFormWrapper.style.display = 'block';
+  
+});
+
+document.getElementById('backButton').addEventListener('click', function () {
+  const editButtonWrapper = document.getElementById('editButtonWrapper');
+  const uploadFormWrapper = document.getElementById('uploadFormWrapper');
+
+  editButtonWrapper.style.display = 'block';
+  uploadFormWrapper.style.display = 'none';
+});
+
+document.getElementById('uploadForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  const fileInput = document.getElementById('profilePhoto');
+  const file = fileInput.files[0];
+
+  if (!file || !file.type.startsWith('image/')) {
+    // File is not an image, show notification and display edit button
+    alert('Hanya file gambar yang dapat diunggah');
+    
+    const editButtonWrapper = document.getElementById('editButtonWrapper');
+    const uploadFormWrapper = document.getElementById('uploadFormWrapper');
+    
+    editButtonWrapper.style.display = 'block';
+    uploadFormWrapper.style.display = 'none';
+
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('profilePhoto', file);
+
+  const saveButton = document.getElementById('saveButton');
+  const saveButtonLabel = document.getElementById('saveButtonLabel');
+  const saveButtonLoader = document.getElementById('saveButtonLoader');
+
+  saveButtonLabel.style.display = 'none';
+  saveButtonLoader.style.display = 'inline-block';
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/profil', true);
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const profileImg = document.getElementById('profile-img');
+      profileImg.src = URL.createObjectURL(file);
+
+      // Save the profile photo URL in local storage
+      localStorage.setItem('profilePhotoURL', profileImg.src);
+
+      console.log('Profile photo uploaded and displayed');
+
+      const editButtonWrapper = document.getElementById('editButtonWrapper');
+      const uploadFormWrapper = document.getElementById('uploadFormWrapper');
+
+      setTimeout(function () {
+        saveButtonLabel.style.display = 'inline-block';
+        saveButtonLoader.style.display = 'none';
+      }, 1000000);
+
+      editButtonWrapper.style.display = 'block';
+      uploadFormWrapper.style.display = 'none';
+
+    } else {
+      console.error('Failed to upload profile photo');
+
+      saveButtonLabel.style.display = 'inline-block';
+      saveButtonLoader.style.display = 'none';
+    }
+  };
+
+  xhr.onerror = function () {
+    console.error('Failed to upload profile photo');
+
+    saveButtonLabel.style.display = 'inline-block';
+    saveButtonLoader.style.display = 'none';
+  };
+
+  xhr.send(formData);
+});
+
+xhr.onload = function () {
+  if (xhr.status === 200) {
+    const profileImg = document.getElementById('profile-img');
+    profileImg.src = URL.createObjectURL(file);
+
+    // Save the profile photo URL in local storage
+    localStorage.setItem('profilePhotoURL', profileImg.src);
+
+    console.log('Profile photo uploaded and displayed');
+
+    const editButtonWrapper = document.getElementById('editButtonWrapper');
+    const uploadFormWrapper = document.getElementById('uploadFormWrapper');
+
+    setTimeout(function () {
+      saveButtonLabel.style.display = 'inline-block';
+      saveButtonLoader.style.display = 'none';
+    }, 5000);
+
+    editButtonWrapper.style.display = 'block';
+    uploadFormWrapper.style.display = 'none';
+  } else {
+    console.error('Failed to upload profile photo');
+
+    saveButtonLabel.style.display = 'inline-block';
+    saveButtonLoader.style.display = 'none';
+  }
+};
+
+xhr.onerror = function () {
+  console.error('Failed to upload profile photo');
+
+  saveButtonLabel.style.display = 'inline-block';
+  saveButtonLoader.style.display = 'none';
+};
+
+xhr.send(formData);
+
+</script> -->

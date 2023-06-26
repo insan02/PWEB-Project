@@ -17,7 +17,7 @@
                     <h1>O - Sign</h1>
                 </div>
                 
-                <form action="/signup" method="POST">
+                <form id="signup-form">
                     <div class="form-item">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" name="username" class="form-control" id="username" >
@@ -48,13 +48,61 @@
                     </div>
                     <a href="/login" class="link-btn">Login</a>
                 </form>
+                
             </div>
         </div>
 
     </div>
 
     <script>
-     function togglePasswordVisibility(inputId) {
+
+        const signupForm = document.getElementById('signup-form');
+
+        signupForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+
+        if (!username || !email || !password || !confirmPassword) {
+            alert('Silakan isi lengkap semua data');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert('Passwords salah');
+            return;
+        }
+
+        if (password.length < 8) {
+            alert('Isi password minimal 8 karakter!');
+            return;
+        }
+
+        const response = await fetch('/signup', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+        // Redirect to the homepage or any other desired page
+        window.location.href = '/login';
+        } else {
+        // Signup failed, display error message
+         alert(data.error);
+        }
+        });
+
+        //icon hide password
+        function togglePasswordVisibility(inputId) {
         var passwordInput = document.getElementById(inputId);
         var passwordIcon = passwordInput.nextElementSibling;
   
@@ -67,7 +115,9 @@
             passwordIcon.classList.remove("fa-eye-slash");
             passwordIcon.classList.add("fa-eye");
         }
-     }
+    }
+
     </script>
+    
 </body>
 </html>

@@ -1,55 +1,98 @@
-<nav>
-  
-</nav>
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
 
-
-
-<div class="top-document">
-  <h3 class="mb-4 mx-2">From Others</h3>   
-</div>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>Pengirim</th>
-      <th>Nama Dokumen</th>
-      <th>File</th>
-      <th>Tanggal</th> 
-      <th>Status Ttd</th>
-      <th>Opsi</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Ahmad</td>
-      <td>Surat Undangan WD I FTI</td>
-      <td><a href="#" width=100% height=800>Undangan WD I.pdf</a></td>
-      <td>12 Februari 2023</td>
-      <td>Belum</td>
-      <td>
-        <button type="button" class="btn btn-danger text-white mb-2" data-bs-toggle="modal" data-bs-target="#modalHapus">
-          Delete
-        </button>
-      </td>
-    </tr>
+  <style>
     
-  </tbody>
-</table>
+  </style>
+</head>
+<body>
+  <nav>
 
-<!-- Modal Hapus-->
-<div class="modal fade" id="modalHapus">
-  <div class="modal-dialog" role="document">
-      <div class="modal-content">
-          <div class="modal-body">
-              Apakah anda yakin ingin menghapus dokumen ini?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <div class="btn btn-danger">Yakin</a>
-            </div>
-          </div>
+  </nav>
+  
+  <div class="container">
+    <div class="sidebar">
+
+    </div>
+
+    <div class="content">
+      <div class="top-document">
+        <h3 class="mb-4 mx-2">From Others</h3>   
       </div>
+
+      <div id="tabel">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nama Dokumen</th>
+              <th>Deskripsi</th>
+              <th>File</th>
+              <th>Status</th>
+              <th>Tanggal</th>
+              <th>Opsi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% senders.forEach(sender => { %>
+              <tr>
+                <td><%= sender.name %></td>
+                <td><%= sender.description %></td>
+                <td><%= sender.filename %></td>
+                <td>Belum Ttd</td>
+                <td><%= moment(sender.created_at).format('LL') %></td>
+                <td>
+                  <button type="button" class="btn btn-primary text-white mb-2" onclick="viewDocument(this)" data-document-link="/viewmessage?file=<%= sender.filename %>">View</button>   
+                  <button type="button" class="btn btn-primary text-white mb-2" onclick="signDocument(this)" data-sign-link="/sign">Sign</button>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      
+    </div>
   </div>
-</div>
+
+  <script>
 
 
+
+  function viewDocument(link) {
+    var documentFrame = document.getElementById("documentFrame");
+    var documentLink = link.getAttribute("data-document-link");
+
+    documentFrame.setAttribute("src", documentLink);
+
+    // Sembunyikan tampilan tabel
+    document.getElementById("tabel").style.display = "none";
+
+    // Sembunyikan tulisan "From Others"
+    document.querySelector(".top-document").style.display = "none";
+
+    // Tampilkan tampilan dokumen undangan
+    document.getElementById("documentView").style.display = "block";
+  }
+
+  function backToTable() {
+    // Sembunyikan tampilan dokumen undangan
+    document.getElementById("documentView").style.display = "none";
+
+    // Tampilkan kembali tampilan tabel
+    document.getElementById("tabel").style.display = "block";
+
+    // Tampilkan kembali tulisan "From Others"
+    document.querySelector(".top-document").style.display = "block";
+  }
+
+  function viewDocument(button) {
+  var documentLink = button.getAttribute('data-document-link');
+  window.open(documentLink, '_blank');
+}
+
+</script>
+
+</body>
+</html>

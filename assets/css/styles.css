@@ -97,6 +97,16 @@ aside .menu a span{
   margin-left:11px;
 }
 
+.change-pass{
+  border:0;
+  background-color:transparent;
+  color:#165AC1;
+  margin-top:5px;
+  transition:.2s;
+}
 
+.change-pass:hover{
+  color:#104390;
+}
 
 
