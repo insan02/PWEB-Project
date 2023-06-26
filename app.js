@@ -139,11 +139,16 @@ console.log('Database terhubung')
   // Home page
   //======================
   app.get('/', requireAuth, function (req, res) {
-    // Render the home page
-    res.render('index', {
-      title: 'Home',
-      layout: 'layouts/kerangka'
-    });
+    // Data yang akan diteruskan ke template EJS
+    const senders = [
+      // Data sender
+    ];
+    
+    // Mendapatkan data pengguna dari sesi atau middleware lainnya
+    const user = req.user;
+  
+  
+    res.render('index', { senders, user, title: 'Home', layout: 'layouts/kerangka' });
   });
 
 //========================  
@@ -442,48 +447,17 @@ app.get('/viewdocument', (req, res) => {
 //======================
 //Upload Tanda Tangan
 //=======================
-app.post('/sign', async (req, res) => {
-  try {
-    // Mendapatkan nama file PDF yang akan ditandatangani
-    const fileName = req.query.file;
+app.get('/getSignImage', (req, res) => {
+  // Assuming you have the sign image data stored as a string
+  const signImgData = "img/";
 
-    // Mendapatkan path file PDF yang akan ditandatangani
-    const pdfPath = path.join(__dirname, 'uploads', fileName);
+  // Set the appropriate response headers
+  res.setHeader('Content-Type', 'text/plain');
 
-    // Mendapatkan path gambar tanda tangan pengguna yang sedang login
-    const signImg = req.user.sign_img; // Assuming the user object is available in the request
-    const signImgPath = path.join(__dirname, 'assets', 'img', signImg);
-
-    // Membaca file PDF
-    const pdfBytes = fs.readFileSync(pdfPath);
-
-    // Membaca gambar tanda tangan pengguna
-    const signImageBytes = fs.readFileSync(signImgPath);
-
-    // Membuat instansi PDFDocument menggunakan pdf-lib
-    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
-
-    // Memasukkan gambar tanda tangan ke dalam dokumen PDF
-    const signImage = await pdfDoc.embedPng(signImageBytes);
-    const page = pdfDoc.addPage();
-
-    // Menyimpan pembaruan dokumen PDF
-    const updatedPdfBytes = await pdfDoc.save();
-
-    // Menentukan path untuk menyimpan file PDF yang diperbarui
-    const updatedPdfPath = path.join(__dirname, 'uploads', 'newfile.pdf');
-
-    // Menyimpan file PDF yang diperbarui
-    fs.writeFileSync(updatedPdfPath, updatedPdfBytes);
-
-    // Membuka PDF yang baru di tab baru
-    const newPdfUrl = `/viewmessage?file=newfile.pdf`;
-    res.send(`<script>window.open("${newPdfUrl}", "_blank");</script>`);
-  } catch (error) {
-    console.error('Terjadi kesalahan:', error);
-    res.status(500).send('Terjadi kesalahan saat menambahkan tanda tangan.');
-  }
+  // Send the sign image data as the response
+  res.send(signImgData);
 });
+
 
 
 //===============

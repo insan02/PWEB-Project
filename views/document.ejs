@@ -58,7 +58,7 @@
 
 <!-- Button Kirim -->
 <div class="top-document">
-  <h3 class="mb-4 mx-2">To Others</h3>
+  <h3 class="mb-4 mx-2">Document Send</h3>
   <div class="btn-doc">
     <button type="button" class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#modalSend">
       Send 
@@ -82,7 +82,7 @@
       <tr>
         <td><%= document.name %></td>
         <td><%= document.filename %></td>
-        <td>Terkirim</td>
+        <td>Belum Ttd</td>
         <td><%= moment(document.created_at).format('LL') %></td>
         <td>
           <button type="button" class="btn btn-primary text-white mb-2" onclick="viewDocument(this)" data-document-link="/viewdocument?file=<%= document.filename %>">View</button> 
