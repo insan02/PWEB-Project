@@ -82,7 +82,7 @@
       <tr>
         <td><%= document.name %></td>
         <td><%= document.filename %></td>
-        <td>Belum Ttd</td>
+        <td>Terkirim</td>
         <td><%= moment(document.created_at).format('LL') %></td>
         <td>
           <button type="button" class="btn btn-primary text-white mb-2" onclick="viewDocument(this)" data-document-link="/viewdocument?file=<%= document.filename %>">View</button> 
@@ -95,30 +95,6 @@
 
 
 <script>
-document.getElementById('exampleModal').addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  var form = event.target;
-  var formData = new FormData(form);
-
-  // Kirim data menggunakan AJAX
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/upload-data', true);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        // Sukses mengirim data
-        console.log('Data berhasil dikirim.');
-        form.reset();
-        closeModal();
-      } else {
-        // Terjadi kesalahan saat mengirim data
-        console.error('Terjadi kesalahan saat mengirim data.');
-      }
-    }
-  };
-  xhr.send(formData);
-});
 
 function viewDocument(button) {
   var documentLink = button.getAttribute('data-document-link');

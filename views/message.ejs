@@ -44,9 +44,7 @@
                 <td><%= moment(sender.created_at).format('LL') %></td>
                 <td>
                   <button type="button" class="btn btn-primary text-white mb-2" onclick="viewDocument(this)" data-document-link="/viewmessage?file=<%= sender.filename %>">View</button>   
-                  <button type="button" class="btn btn-warning text-white mb-2" onclick="openFilePicker()">Upload Sign</button>
-                    
-                  </form>
+                  <button type="button" class="btn btn-warning text-white mb-2">Sign</button>
                 </td>
               </tr>
             <% }); %>
@@ -60,33 +58,7 @@
 
   <script>
 
-function openFilePicker() {
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var signImgData = xhr.responseText;
 
-          var iframe = document.getElementById("documentFrame");
-          iframe.src = signImgData;
-
-          var signImgInput = document.getElementById("sign_img");
-          signImgInput.value = signImgData;
-        }
-      };
-
-  xhr.open("GET", "/getSignImage", true);
-  xhr.send();
-}
-
-    function viewDocument(button) {
-      var documentLink = button.getAttribute("data-document-link");
-      window.open(documentLink, "_blank");
-    }
-
-    function backToTable() {
-      var documentView = document.getElementById("documentView");
-      documentView.style.display = "none";
-    }
 
   function viewDocument(link) {
     var documentFrame = document.getElementById("documentFrame");

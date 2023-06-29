@@ -5,11 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
-    <link rel='stylesheet' href='./css/auth.css'/> 
+    <link rel="stylesheet" href="./css/auth.css"/> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    
     <div class="regis-wrapper">
         <div class="right">
             <div class="form-container">
@@ -20,104 +19,97 @@
                 <form id="signup-form">
                     <div class="form-item">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" id="username" >
+                        <input type="text" name="username" class="form-control" id="username" required>
                     </div>
                     <div class="form-item">
                         <label for="email" class="form-label">Email</label>
-                        <input type="text" name="email" class="form-control" id="email" >
+                        <input type="email" name="email" class="form-control" id="email" required>
                     </div>
                     <div class="form-item">
-                        <label for="exampleInputPassword1" class="form-label">Password</label>
+                        <label for="password" class="form-label">Password</label>
                         <div class="password-container">
-                            <input type="password" name="password" class="form-control" id="password">
+                            <input type="password" name="password" class="form-control" id="password" required>
                             <i class="password-icon fas fa-eye" onclick="togglePasswordVisibility('password')"></i>
                         </div>
                     </div>
                     <div class="form-item">
-                        <label for="exampleInputPassword1" class="form-label">Confirm Password</label>
+                        <label for="confirm_password" class="form-label">Confirm Password</label>
                         <div class="password-container">
-                            <input type="password" name="confirm_password" class="form-control" id="confirm_password">
+                            <input type="password" name="confirm_password" class="form-control" id="confirm_password" required>
                             <i class="password-icon fas fa-eye" onclick="togglePasswordVisibility('confirm_password')"></i>
                         </div>
                     </div>
                     <div class="form-item form-button">
                         <button type="submit" class="btn-submit">
                             Create
-                            
                         </button>       
                     </div>
                     <a href="/login" class="link-btn">Login</a>
                 </form>
-                
             </div>
         </div>
-
     </div>
 
     <script>
-
         const signupForm = document.getElementById('signup-form');
 
         signupForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+            event.preventDefault();
 
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
 
-        if (!username || !email || !password || !confirmPassword) {
-            alert('Silakan isi lengkap semua data');
-            return;
-        }
+            if (!username || !email || !password || !confirmPassword) {
+                alert('Silakan isi semua data');
+                return;
+            }
 
-        if (password !== confirmPassword) {
-            alert('Passwords salah');
-            return;
-        }
+            if (password !== confirmPassword) {
+                alert('Password tidak sesuai');
+                return;
+            }
 
-        if (password.length < 8) {
-            alert('Isi password minimal 8 karakter!');
-            return;
-        }
+            if (password.length < 8) {
+                alert('Password harus minimal 8 karakter');
+                return;
+            }
 
-        const response = await fetch('/signup', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Redirect to the homepage or any other desired page
+                window.location.href = '/login';
+            } else {
+                // Signup failed, display error message
+                alert(data.error);
+            }
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-
-        // Redirect to the homepage or any other desired page
-        window.location.href = '/login';
-        } else {
-        // Signup failed, display error message
-         alert(data.error);
-        }
-        });
-
-        //icon hide password
+        // Icon hide password
         function togglePasswordVisibility(inputId) {
-        var passwordInput = document.getElementById(inputId);
-        var passwordIcon = passwordInput.nextElementSibling;
-  
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            passwordIcon.classList.remove("fa-eye");
-            passwordIcon.classList.add("fa-eye-slash");
-        } else {
-            passwordInput.type = "password";
-            passwordIcon.classList.remove("fa-eye-slash");
-            passwordIcon.classList.add("fa-eye");
-        }
-    }
+            var passwordInput = document.getElementById(inputId);
+            var passwordIcon = passwordInput.nextElementSibling;
 
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                passwordIcon.classList.remove("fa-eye");
+                passwordIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                passwordIcon.classList.remove("fa-eye-slash");
+                passwordIcon.classList.add("fa-eye");
+            }
+        }
     </script>
-    
 </body>
 </html>

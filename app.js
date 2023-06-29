@@ -139,16 +139,11 @@ console.log('Database terhubung')
   // Home page
   //======================
   app.get('/', requireAuth, function (req, res) {
-    // Data yang akan diteruskan ke template EJS
-    const senders = [
-      // Data sender
-    ];
-    
-    // Mendapatkan data pengguna dari sesi atau middleware lainnya
-    const user = req.user;
-  
-  
-    res.render('index', { senders, user, title: 'Home', layout: 'layouts/kerangka' });
+    // Render the home page
+    res.render('index', {
+      title: 'Home',
+      layout: 'layouts/kerangka'
+    });
   });
 
 //========================  
@@ -164,54 +159,60 @@ console.log('Database terhubung')
 
   app.post('/login', function (req, res) {
     const { usernameOrEmail, password } = req.body;
-
+  
     const sql = 'SELECT * FROM users WHERE username = ? OR email = ?';
     db.query(sql, [usernameOrEmail, usernameOrEmail], function(err, result) {
-      if (err) throw err;
-
-     if (result.length === 0) {
-      // Username or password is incorrect
-       return res.status(401).json({ error: 'Username atau email tidak ditemukan' });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Terjadi kesalahan pada server' });
       }
-
+  
+      if (result.length === 0) {
+        // Username or email is not found
+        return res.status(401).json({ error: 'Username atau email tidak ditemukan' });
+      }
+  
       const user = result[0];
-
-     // Compare password
-     bcrypt.compare(password, user.password, function(err, isValid) {
-      if (err) throw err;
-
-      if (!isValid) {
-        // Username or password is incorrect
-        return res.status(401).json({ error: 'Password anda salah!' });
-      }
-
-      // Generate token
-      const token = jwt.sign({ user_id: user.user_id }, 'secret_key');
-      res.cookie('token', token, { httpOnly: true });
-
-      res.status(200).json({ message: 'Login berhasil' });
+  
+      // Compare password
+      bcrypt.compare(password, user.password, function(err, isValid) {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+        }
+  
+        if (!isValid) {
+          // Username or password is incorrect
+          return res.status(401).json({ error: 'Password anda salah!' });
+        }
+  
+        // Generate token
+        const token = jwt.sign({ user_id: user.user_id }, 'secret_key');
+        res.cookie('token', token, { httpOnly: true });
+  
+        return res.status(200).json({ message: 'Login berhasil' });
       });
     });
   });
-
+  
   function requireAuth(req, res, next) {
     const token = req.cookies.token;
-
-   if (!token) {
-    res.redirect('/login');
-    return;
+  
+    if (!token) {
+      return res.redirect('/login');
     }
   
     jwt.verify(token, 'secret_key', function(err, decoded) {
-    if (err) {
-      res.redirect('/login');
-      return;
-    }
-
-    req.user_id = decoded.user_id;
-    next();
-  });
-}
+      if (err) {
+        console.error(err);
+        return res.redirect('/login');
+      }
+  
+      req.user_id = decoded.user_id;
+      next();
+    });
+  }
+  
 
 //===============
 //Profil
@@ -447,16 +448,6 @@ app.get('/viewdocument', (req, res) => {
 //======================
 //Upload Tanda Tangan
 //=======================
-app.get('/getSignImage', (req, res) => {
-  // Assuming you have the sign image data stored as a string
-  const signImgData = "img/";
-
-  // Set the appropriate response headers
-  res.setHeader('Content-Type', 'text/plain');
-
-  // Send the sign image data as the response
-  res.send(signImgData);
-});
 
 
 
