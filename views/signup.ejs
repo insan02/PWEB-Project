@@ -77,22 +77,23 @@
             }
 
             const response = await fetch('/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
-            });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
+});
 
-            const data = await response.json();
+if (response.ok) {
+  // Signup successful
+  // Redirect to the login page or any other desired page
+  window.location.href = '/login';
+} else {
+  const data = await response.json();
+  // Signup failed, display error message
+  alert(data.error);
+}
 
-            if (response.ok) {
-                // Redirect to the homepage or any other desired page
-                window.location.href = '/login';
-            } else {
-                // Signup failed, display error message
-                alert(data.error);
-            }
         });
 
         // Icon hide password
