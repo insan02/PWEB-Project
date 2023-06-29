@@ -93,7 +93,10 @@ console.log('Database terhubung')
     // check if username or email already exists
     const sqlCheck = 'SELECT * FROM users WHERE username = ? OR email = ?';
     db.query(sqlCheck, account, (err, result) => {
-      if (err) throw err;
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+      }
   
       if (result.length > 0) {
         const existingUser = result.find(user => user.username === username);
@@ -122,19 +125,27 @@ console.log('Database terhubung')
   
       // hash password
       bcrypt.hash(password, saltRounds, function (err, hash) {
-        if (err) throw err;
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+        }
   
-        // insert user to database
-        const sqlInsert = 'INSERT INTO users (username, email, password, active) VALUES (?, ?, ?, ?)';
-        const values = [username, email, hash, true];
+        // insert user to database with 'active' set to 1
+        const sqlInsert = 'INSERT INTO users (username, email, password, active) VALUES (?, ?, ?, 1)';
+        const values = [username, email, hash];
         db.query(sqlInsert, values, (err, result) => {
-          if (err) throw err;
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+          }
+  
           console.log('user registered');
           res.json({ message: 'User registered successfully!' });
         });
       });
     });
   });
+  
   
   
   //=======================
@@ -188,14 +199,24 @@ console.log('Database terhubung')
           return res.status(401).json({ error: 'Password Anda salah!' });
         }
   
-        // Generate token
-        const token = jwt.sign({ user_id: user.user_id }, 'secret_key');
-        res.cookie('token', token, { httpOnly: true });
+        // Update 'active' column to 1 for the logged-in user
+        const sqlUpdate = 'UPDATE users SET active = 1 WHERE user_id = ?';
+        db.query(sqlUpdate, [user.user_id], function(err, result) {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+          }
   
-        res.status(200).json({ message: 'Login berhasil' });
+          // Generate token
+          const token = jwt.sign({ user_id: user.user_id }, 'secret_key');
+          res.cookie('token', token, { httpOnly: true });
+  
+          return res.status(200).json({ message: 'Login berhasil' });
+        });
       });
     });
   });
+  
   
   
   function requireAuth(req, res, next) {
