@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 29, 2023 at 01:26 PM
+-- Generation Time: Jun 29, 2023 at 01:45 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 5.6.30
 
@@ -95,7 +95,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `active`, `sign_img`, `created_at`, `updated_at`) VALUES
-(9, 'tes', 'tes@gmail.com', '$2a$10$2YIukeJURGVgO5ZMOYwXjuXoPzYPiKiPUqWYw2mcsKrZi4T1493Mq', 0, 'diagram sesudah dgn layanan.drawio (1).png', '2023-06-26 00:51:18.976565', '2023-06-26 00:51:18.976565'),
+(9, 'tes', 'tes@gmail.com', '$2a$10$2YIukeJURGVgO5ZMOYwXjuXoPzYPiKiPUqWYw2mcsKrZi4T1493Mq', 1, 'diagram sesudah dgn layanan.drawio (1).png', '2023-06-26 00:51:18.976565', '2023-06-26 00:51:18.976565'),
 (10, 'coba', 'coba@gmail.com', '$2a$10$dJl7kwmQVU9N55jo0pkCOONi8g01VnvL8aMNVDkN2ewzSvKaGkMO6', 0, 'Untitled Diagram.drawio (5).png', '2023-06-26 00:52:57.613123', '2023-06-26 00:52:57.613123'),
 (11, 'faiz', 'faiz@gmailcom', '$2a$10$17tzxykBOcR0Q0uvbfrGMOrSWF4z1ue0FIOtY9XDxDTDvR2pxQiAK', 0, 'Windows 10 (1920Ã1080).jpeg', '2023-06-26 09:42:13.757092', '2023-06-26 09:42:13.757092'),
 (13, 'adminn', 'admin01@gmail.com', '$2a$10$76Da8ReYVxIfXE/0n5pw1ekkVzrOOWESAF.PbpOgTwDg8FxS6Ry7u', 0, 'Windows 10 (1920Ã1080).jpeg', '2023-06-26 10:26:37.584778', '2023-06-26 10:26:37.584778'),
