@@ -182,8 +182,8 @@ console.log('Database terhubung')
         }
   
         if (!isValid) {
-          // Username or password is incorrect
-          return res.status(401).json({ error: 'Password anda salah!' });
+          // Password is incorrect
+          return res.status(401).json({ error: 'Password Anda salah!' });
         }
   
         // Generate token
@@ -194,6 +194,7 @@ console.log('Database terhubung')
       });
     });
   });
+  
   
   function requireAuth(req, res, next) {
     const token = req.cookies.token;
