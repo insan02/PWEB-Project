@@ -45,24 +45,23 @@
         const usernameOrEmail = document.getElementById('usernameOrEmail').value;
         const password = document.getElementById('password').value;
 
-         const response = await fetch('/login', {
-             method: 'POST',
-            headers: {
-                    'Content-Type': 'application/json'
-                },
-             body: JSON.stringify({ usernameOrEmail, password })
-            });
+        const response = await fetch('/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ usernameOrEmail, password })
+});
 
-        const data = await response.json();
-
-        if (response.ok) {
-         // Login successful
-         // Redirect to the homepage or any other desired page
-         window.location.href = '/';
-            } else {
-        // Login failed, display error message
-                alert(data.error);
-            }
+if (response.ok) {
+  // Login successful
+  // Redirect to the homepage or any other desired page
+  window.location.href = '/';
+} else {
+  const data = await response.json();
+  // Login failed, display error message
+  alert(data.error);
+}
         });
 
         function togglePasswordVisibility(inputId) {
