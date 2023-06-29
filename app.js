@@ -192,7 +192,7 @@ console.log('Database terhubung')
         const token = jwt.sign({ user_id: user.user_id }, 'secret_key');
         res.cookie('token', token, { httpOnly: true });
   
-        return res.status(200).json({ message: 'Login berhasil' });
+        res.status(200).json({ message: 'Login berhasil' });
       });
     });
   });
@@ -215,6 +215,7 @@ console.log('Database terhubung')
       next();
     });
   }
+  
   
 
 //===============

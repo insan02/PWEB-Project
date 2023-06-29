@@ -46,22 +46,27 @@
         const password = document.getElementById('password').value;
 
         const response = await fetch('/login', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ usernameOrEmail, password })
-});
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ usernameOrEmail, password })
+        });
 
-if (response.ok) {
+        if (response.ok) {
   // Login successful
   // Redirect to the homepage or any other desired page
-  window.location.href = '/';
-} else {
-  const data = await response.json();
-  // Login failed, display error message
-  alert(data.error);
-}
+        window.location.href = '/';
+        } else {
+        try {
+            const data = await response.json();
+    // Login failed, display error message
+            alert(data.error);
+        } catch (error) {
+    // Handle non-JSON response
+            alert('Login failed. Please try again.');
+        }
+        }
         });
 
         function togglePasswordVisibility(inputId) {
