@@ -126,7 +126,7 @@ console.log('Database terhubung')
   
         // insert user to database
         const sqlInsert = 'INSERT INTO users (username, email, password, active) VALUES (?, ?, ?, ?)';
-        const values = [username, email, hash, null];
+        const values = [username, email, hash, true];
         db.query(sqlInsert, values, (err, result) => {
           if (err) throw err;
           console.log('user registered');
