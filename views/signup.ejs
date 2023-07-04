@@ -77,22 +77,22 @@
             }
 
             const response = await fetch('/signup', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
-});
+            method: 'POST',
+            headers: {
+             'Content-Type': 'application/json'
+             },
+             body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
+            });
 
-if (response.ok) {
-  // Signup successful
-  // Redirect to the login page or any other desired page
-  window.location.href = '/login';
-} else {
-  const data = await response.json();
-  // Signup failed, display error message
-  alert(data.error);
-}
+            if (response.ok) {
+            // Signup successful
+            // Redirect to the login page or any other desired page
+            window.location.href = '/login';
+            } else {
+            const data = await response.json();
+            // Signup failed, display error message
+            alert(data.error);
+            }
 
         });
 

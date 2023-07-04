@@ -11,16 +11,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form class="form-upload" action="/send-data" method="post" enctype="multipart/form-data">
+        <form class="form-upload" id="sendDataForm" action="/send-data" method="post" enctype="multipart/form-data">
           <div class="row mb-3">
-            <label for="To_user" class="col-sm-4 col-form-label">To User :</label>
+            <label for="nama-tujuan" class="col-sm-4 col-form-label">Username Tujuan</label>
             <div class="col-sm-8">
-              <select name="user_id" class="form-control" id="selectUser">
-                <option value="">Pilih pengguna...</option>
-                <% users.forEach(function(user) { %>
-                  <option value="<%= user.user_id %>"><%= user.username %></option>
-                <% }); %>
-              </select>
+              <input type="text" id="nama-tujuan" name="username" class="form-control">
             </div>
           </div>
           <div class="row mb-3">
@@ -82,7 +77,7 @@
       <tr>
         <td><%= document.name %></td>
         <td><%= document.filename %></td>
-        <td>Terkirim</td>
+        <td>Belum Ttd</td>
         <td><%= moment(document.created_at).format('LL') %></td>
         <td>
           <button type="button" class="btn btn-primary text-white mb-2" onclick="viewDocument(this)" data-document-link="/viewdocument?file=<%= document.filename %>">View</button> 
@@ -96,16 +91,40 @@
 
 <script>
 
+document.getElementById('sendDataForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  
+  var formData = new FormData(this);
+  
+  fetch('/send-data', {
+    method: 'POST',
+    body: formData
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(data) {
+    if (data.success) {
+      alert(data.message);
+      window.location.href = '/document'; // Mengarahkan kembali ke halaman dokumen
+    } else {
+      alert(data.message);
+      if (data.redirect) {
+      window.location.href = '/document'; // Mengarahkan kembali ke halaman dokumen jika username tujuan tidak ditemukan
+      }
+    }
+    document.getElementById('modalSend').classList.remove('show'); // Menutup modal setelah pengiriman data
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+});
+
 function viewDocument(button) {
   var documentLink = button.getAttribute('data-document-link');
   window.open(documentLink, '_blank');
 }
 
-function closeModal() {
-  var modal = document.getElementById('exampleModal');
-  var modalInstance = bootstrap.Modal.getInstance(modal);
-  modalInstance.hide();
-}
 </script>
 
 

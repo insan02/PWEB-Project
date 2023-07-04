@@ -35,19 +35,25 @@
             </tr>
           </thead>
           <tbody>
-            <% senders.forEach(sender => { %>
+            <% if (senders && senders.length > 0) { %>
+              <% senders.forEach(sender => { %>
+                <tr>
+                  <td><%= sender.name %></td>
+                  <td><%= sender.description %></td>
+                  <td><%= sender.filename %></td>
+                  <td>Belum Ttd</td>
+                  <td><%= moment(sender.created_at).format('LL') %></td>
+                  <td>
+                    <button type="button" class="btn btn-primary text-white mb-2" onclick="viewDocument(this)" data-document-link="/viewmessage?file=<%= sender.filename %>">View</button>   
+                      <button type="submit" class="btn btn-warning text-white mb-2">Sign</button>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
               <tr>
-                <td><%= sender.name %></td>
-                <td><%= sender.description %></td>
-                <td><%= sender.filename %></td>
-                <td>Belum Ttd</td>
-                <td><%= moment(sender.created_at).format('LL') %></td>
-                <td>
-                  <button type="button" class="btn btn-primary text-white mb-2" onclick="viewDocument(this)" data-document-link="/viewmessage?file=<%= sender.filename %>">View</button>   
-                  <button type="button" class="btn btn-warning text-white mb-2">Sign</button>
-                </td>
+                <td colspan="6">Tidak ada request yang ditemukan.</td>
               </tr>
-            <% }); %>
+            <% } %>
           </tbody>
         </table>
       </div>
@@ -58,41 +64,12 @@
 
   <script>
 
-
-
-  function viewDocument(link) {
-    var documentFrame = document.getElementById("documentFrame");
-    var documentLink = link.getAttribute("data-document-link");
-
-    documentFrame.setAttribute("src", documentLink);
-
-    // Sembunyikan tampilan tabel
-    document.getElementById("tabel").style.display = "none";
-
-    // Sembunyikan tulisan "From Others"
-    document.querySelector(".top-document").style.display = "none";
-
-    // Tampilkan tampilan dokumen undangan
-    document.getElementById("documentView").style.display = "block";
-  }
-
-  function backToTable() {
-    // Sembunyikan tampilan dokumen undangan
-    document.getElementById("documentView").style.display = "none";
-
-    // Tampilkan kembali tampilan tabel
-    document.getElementById("tabel").style.display = "block";
-
-    // Tampilkan kembali tulisan "From Others"
-    document.querySelector(".top-document").style.display = "block";
-  }
-
   function viewDocument(button) {
   var documentLink = button.getAttribute('data-document-link');
   window.open(documentLink, '_blank');
-}
+  }
 
-</script>
+  </script>
 
 </body>
 </html>

@@ -54,16 +54,16 @@
         });
 
         if (response.ok) {
-  // Login successful
-  // Redirect to the homepage or any other desired page
+        // Login successful
+        // Redirect to the homepage or any other desired page
         window.location.href = '/';
         } else {
         try {
             const data = await response.json();
-    // Login failed, display error message
+        // Login failed, display error message
             alert(data.error);
         } catch (error) {
-    // Handle non-JSON response
+        // Handle non-JSON response
             alert('Login failed. Please try again.');
         }
         }
